@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'postsapp',
+    'posts.api',
     'rest_framework',
     'rest_framework_simplejwt',
     'django_nose',
@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'postsapp.middlewares.authentication.AuthenticationMiddleware',
+    'posts.api.middlewares.authentication.AuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'posts.urls'
@@ -143,8 +143,8 @@ SIMPLE_JWT =  {
 # Use nose to run all tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
-# Tell nose to measure coverage on postsapp
+# Tell nose to measure coverage on api
 NOSE_ARGS = [
     '--with-coverage',
-    '--cover-package=postsapp',
+    '--cover-package=posts.api',
 ]

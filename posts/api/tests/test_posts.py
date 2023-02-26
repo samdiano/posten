@@ -11,9 +11,9 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from django.urls import reverse
 from django.contrib.auth.models import User
-from postsapp.models import Post
-from postsapp.serializers import PostSerializer
-from postsapp.utils.jwt_utils import get_token_for_user
+from posts.api.models import Post
+from posts.api.serializers import PostSerializer
+from posts.api.utils.jwt_utils import get_token_for_user
 
 # initialize the APIClient app
 client = APIClient()
@@ -34,7 +34,7 @@ class PostTest(TestCase):
     def test_get_all_posts(self):
         client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
         # get API response
-        response = client.get('/api/v1/posts')
+        response = client.get('/api/posts')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response_data = response.json()
         posts = Post.objects.all()
@@ -54,7 +54,7 @@ class PostTest(TestCase):
             'content': 'This is a new test post.',
         }
         client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
-        response = client.post('/api/v1/posts', data, format='json')
+        response = client.post('/api/posts', data, format='json')
         # get data from db
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['status'], 'success')
@@ -68,7 +68,7 @@ class PostTest(TestCase):
 
     def test_get_post_detail(self):
         # get API response
-        response = client.get('/api/v1/posts/{}'.format(self.post.pk))
+        response = client.get('/api/posts/{}'.format(self.post.pk))
         print(response)
         # get data from db
         post = Post.objects.get(pk=self.post.pk)
@@ -83,7 +83,7 @@ class PostTest(TestCase):
         # get API response
         data = {'content': 'This is updated test post.'}
         client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
-        response = client.patch(f'/api/v1/posts/{self.post.pk}', data, format='json')
+        response = client.patch(f'/api/posts/{self.post.pk}', data, format='json')
         # get data from db
         post = Post.objects.get(pk=self.post.pk)
         serializer = PostSerializer(post)
@@ -102,14 +102,14 @@ class PostTest(TestCase):
     def test_delete_post(self):
         # get API response
         client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
-        response = client.delete(f'/api/v1/posts/{self.post.pk}')
+        response = client.delete(f'/api/posts/{self.post.pk}')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
     def test_like_post(self):
         # get API response
         client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
-        response = client.post(f'/api/v1/posts/{self.post.pk}/like')
+        response = client.post(f'/api/posts/{self.post.pk}/like')
         # get data from db
         post = Post.objects.get(pk=self.post.pk)
         self.assertIn(self.user, post.likes.all())
@@ -120,7 +120,7 @@ class PostTest(TestCase):
     def test_like_post(self):
         # get API response
         client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
-        response = client.post(f'/api/v1/posts/{self.post.pk}/unlike')
+        response = client.post(f'/api/posts/{self.post.pk}/unlike')
         # get data from db
         post = Post.objects.get(pk=self.post.pk)
         self.assertNotIn(self.user, post.likes.all())
